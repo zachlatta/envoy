@@ -1,9 +1,7 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -23,26 +21,15 @@ var (
 )
 
 func main() {
-	slackClient := slack.New(slackToken)
-	logger := log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)
-	slack.SetLogger(logger)
-
 	twilioClient := twilio.NewClient(twilioSid, twilioToken, nil)
-
-	userID, err := currentUserID(slackClient)
+	slackManager, err := NewSlackManager(slackToken, channelToEnvoy)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error retrieving authenticated user's information:", err)
+		fmt.Fprintln(os.Stderr, "Error initializing Slack:", err)
 		os.Exit(1)
 	}
 
-	channelID, err := channelID(slackClient, channelToEnvoy)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error retrieving given channel's information:", err)
-		os.Exit(1)
-	}
-
-	go runSlack(slackClient, twilioClient, channelID, userID)
-	listenSMS(twilioClient, slackClient, channelID, userID)
+	go slackManager.Run(twilioClient)
+	listenSMS(twilioClient, slackManager.api, slackManager.channelID, slackManager.userID)
 }
 
 func listenSMS(twilioClient *twilio.Client, slackClient *slack.Client, channelID, userID string) error {
@@ -63,61 +50,6 @@ func listenSMS(twilioClient *twilio.Client, slackClient *slack.Client, channelID
 
 	fmt.Println("Listening for SMS callbacks on port 3000")
 	return http.ListenAndServe(":3000", nil)
-}
-
-func runSlack(slackClient *slack.Client, twilioClient *twilio.Client, channelID, userID string) {
-	rtm := slackClient.NewRTM()
-	go rtm.ManageConnection()
-
-loop:
-	for {
-		select {
-		case msg := <-rtm.IncomingEvents:
-			switch ev := msg.Data.(type) {
-			case *slack.ConnectedEvent:
-				fmt.Println("Connected to Slack! Connection count:", ev.ConnectionCount)
-
-			case *slack.MessageEvent:
-				msg := msg.Data.(*slack.MessageEvent).Msg
-
-				if msg.Channel != channelID || msg.User == userID {
-					continue
-				}
-
-				if err := sendSMS(twilioClient, fromNumber, toNumber, msg.Text); err != nil {
-					fmt.Fprintln(os.Stderr, "Failed to send SMS:", msg.Text)
-				}
-
-			case *slack.InvalidAuthEvent:
-				fmt.Printf("Invalid credentials")
-				break loop
-			}
-		}
-	}
-}
-
-func currentUserID(client *slack.Client) (string, error) {
-	resp, err := client.AuthTest()
-	if err != nil {
-		return "", err
-	}
-
-	return resp.UserID, nil
-}
-
-func channelID(client *slack.Client, channelName string) (string, error) {
-	channels, err := client.GetChannels(true)
-	if err != nil {
-		return "", err
-	}
-
-	for _, channel := range channels {
-		if channel.Name == channelName {
-			return channel.ID, nil
-		}
-	}
-
-	return "", errors.New("channel not found")
 }
 
 func sendSMS(client *twilio.Client, fromNumber, toNumber, msg string) error {

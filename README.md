@@ -35,7 +35,7 @@ Right now Envoy only allows you to communicate with a single channel, though hop
     
 5. Start the beast!
 
-        $ go run main.go
+        $ go run slack.go main.go
 
 ## License
 
