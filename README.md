@@ -47,4 +47,4 @@ Right now Envoy only allows you to communicate with a single channel, though hop
 
 ## License
 
-See [LICENSE][LICENSE].
+See [LICENSE](LICENSE).
