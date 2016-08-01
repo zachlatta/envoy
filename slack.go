@@ -5,7 +5,6 @@ import (
 
 	"fmt"
 	"github.com/nlopes/slack"
-	"github.com/subosito/twilio"
 	"os"
 )
 
@@ -40,7 +39,7 @@ func NewSlackManager(token, channelName string) (*SlackManager, error) {
 	}, nil
 }
 
-func (m *SlackManager) Run(twilioClient *twilio.Client) {
+func (m *SlackManager) Run(msgService MessageService) {
 	rtm := m.api.NewRTM()
 	go rtm.ManageConnection()
 
@@ -59,7 +58,7 @@ loop:
 					continue
 				}
 
-				if err := sendSMS(twilioClient, fromNumber, toNumber, msg.Text); err != nil {
+				if err := msgService.SendMessage(msg.Text); err != nil {
 					fmt.Fprintln(os.Stderr, "Failed to send SMS:", msg.Text)
 				}
 
@@ -69,6 +68,17 @@ loop:
 			}
 		}
 	}
+}
+
+func (m *SlackManager) SendMessage(msg string) error {
+	params := slack.NewPostMessageParameters()
+	params.AsUser = true
+
+	if _, _, err := m.api.PostMessage(m.channelID, msg, params); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func currentUserID(client *slack.Client) (string, error) {
