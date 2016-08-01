@@ -1,5 +1,7 @@
 # Envoy
 
+![](demo.gif)
+
 Envoy is an SMS client for Slack. Enjoy Slack but hate the mobile client? This may be for you.
 
 ## How it Works
