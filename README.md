@@ -22,17 +22,23 @@ Right now Envoy only allows you to communicate with a single channel, though hop
 
     ![](twilio_callback_setup.gif)
     
-4. Run the following commands to set up your environment variables -- make sure to replace anything between `<` and `>` with proper values.
+4. Run the following commands to set up your environment variables -- make sure to replace the sample data with your actual values.
 
     ```sh
-    export FROM_NUMBER=<Twilio number you bought (ex. +13104442222)>
-    export TO_NUMBER=<your phone number (ex. +13102224444)>
+    # Twilio number you bought
+    export FROM_NUMBER="+13104242222"
+    # Your phone number
+    export TO_NUMBER="+13102424444"
+    
+    # Slack API token -- get it from https://api.slack.com/docs/oauth-test-tokens
+    export SLACK_TOKEN=xoxp-49598003913-50591248285-62829404320-dx13f26cc7
+    # Channel to use Envoy with. Don't include the hashtag in its name
+    export SLACK_CHANNEL=general
 
-    export SLACK_TOKEN=<Slack API token, get it from https://api.slack.com/docs/oauth-test-tokens>
-    export SLACK_CHANNEL=<Slack channel you'd like to link with Envoy (ex. general) - no hashtag>
-
-    export TWILIO_SID=<Twilio account SID, get on your Twilio console>
-    export TWILIO_TOKEN=<Twilio auth token, get on your Twilio console>
+    # Twilio account SID, get it from your Twilio console
+    export TWILIO_SID=AC2dbb33ca2a49fab0df2b744c236k9dc2
+    # Twilio auth token, get it from your Twilio console
+    export TWILIO_TOKEN=eb748ed3782949245fee2a38fe80a80b
     ```
     
 5. Start the beast!
