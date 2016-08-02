@@ -1,0 +1,21 @@
+{
+	"ImportPath": "github.com/zachlatta/envoy",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v74",
+	"Deps": [
+		{
+			"ImportPath": "github.com/nlopes/slack",
+			"Comment": "v0.0.1-118-g4feee83",
+			"Rev": "4feee83bb2b31d790977ce727a028c6a542c72c7"
+		},
+		{
+			"ImportPath": "github.com/subosito/twilio",
+			"Comment": "v0.0.1-27-g6fe3f66",
+			"Rev": "6fe3f668700aac2d7a79ab5367b5e0d67307308e"
+		},
+		{
+			"ImportPath": "golang.org/x/net/websocket",
+			"Rev": "4d38db76854b199960801a1734443fd02870d7e1"
+		}
+	]
+}
