@@ -41,6 +41,8 @@ func (s *TwilioService) Listen(port, path string, callback func(msg string)) err
 		msg := r.FormValue("Body")
 
 		callback(msg)
+
+		fmt.Fprintln(w, "Received message!")
 	})
 
 	return http.ListenAndServe(port, nil)
