@@ -59,7 +59,7 @@ loop:
 				}
 
 				if err := msgService.SendMessage(msg.Text); err != nil {
-					fmt.Fprintln(os.Stderr, "Failed to send SMS:", msg.Text)
+					fmt.Fprintln(os.Stderr, "Failed to send SMS:", err)
 				}
 
 			case *slack.InvalidAuthEvent:
