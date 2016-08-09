@@ -20,7 +20,11 @@ type TwilioService struct {
 }
 
 func NewTwilioService(sid, token, fromNumber, toNumber string) *TwilioService {
-	return &TwilioService{api: twilio.NewClient(sid, token, nil)}
+	return &TwilioService{
+		api:        twilio.NewClient(sid, token, nil),
+		fromNumber: fromNumber,
+		toNumber:   toNumber,
+	}
 }
 
 func (s *TwilioService) SendMessage(msg string) error {
